@@ -1,34 +1,43 @@
-import { db } from '../Config/firebase';
+import { db, auth } from '../Config/firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { uploadImageToCloudinary } from './cloudinary';
 import { toast } from 'react-toastify';
 
-export const uploadProduct = async (productData, user) => { 
+export const uploadProduct = async (productData) => {
+  const user = auth.currentUser;
 
-    const { name, price, description, address, file } = productData;
+  if (!user) {
+    toast.error("Please login first");
+    return false;
+  }
 
-    const image = file[0];
+  const { name, price, description, address, file } = productData;
+  const image = file[0];
 
-    try{
-        const imageUrl = await uploadImageToCloudinary(image);
+  try {
+    const imageUrl = await uploadImageToCloudinary(image);
 
-        const product = {
-        name,
-        price,
-        description,
-        address,
-        imageUrl,
-        postedby: user,
-        createdAt: serverTimestamp(),
-        };
+    const product = {
+      name,
+      price,
+      description,
+      address,
+      imageUrl,
+      postedby: user.displayName || "unknown",
+      ownerId: user.uid,          
+      createdAt: serverTimestamp(),
+    };
 
-        const docRef = await addDoc(collection(db, 'products'), product);
-        toast.success('Product Added Successfully')
-        return true;
-        console.log("Image URL:",imageUrl);
+    console.log("UPLOADING PRODUCT:", product);
 
-    }catch(error){
-        toast.success("Failed to Upload Post");
-        return false;
-    }
+    await addDoc(collection(db, 'products'), product);
+
+    toast.success('Product Added Successfully');
+    return true;
+
+  } catch (error) {
+    console.error("UPLOAD FAILED:", error);
+    toast.error(error.message);
+    return false;
+  }
 };
