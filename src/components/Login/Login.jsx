@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form'; // UI-level validation library
-import { zodResolver } from '@hookform/resolvers/zod'; // Schema validation library (zod) and zodResolver connect react-hook-form and Zod
+import { useForm } from 'react-hook-form'; 
+import { zodResolver } from '@hookform/resolvers/zod'; 
 import { loginSchema, signupSchema } from '../../utils/validation';
 import { Input } from './Input';
 import { signinUser, signupUser } from '../../utils/authentication';

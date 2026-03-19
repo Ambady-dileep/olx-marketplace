@@ -4,6 +4,7 @@ export const Input = ({ type, placeholder, name, error, register }) => {
       <input
         type={type}
         placeholder={placeholder}
+        autoComplete="off" 
         className="px-3 py-3 border-2 border-black rounded-md mt-3"
         {...register(name)}
       />
